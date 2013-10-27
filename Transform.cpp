@@ -49,10 +49,19 @@ void Transform::up(float degrees, vec3& eye, vec3& up) {
 
 // Your implementation of the glm::lookAt matrix
 mat4 Transform::lookAt(vec3 eye, vec3 up) {
-  // YOUR CODE FOR HW1 HERE
-
-  // You will change this return call
-  return mat4();
+  // Use the eye and up vectors to create the coordinate system
+  vec3 w = glm::normalize(eye);
+  vec3 u = glm::normalize(glm::cross(up,w));
+  vec3 v = glm::cross(w,u);
+  
+  mat4 coord_system;
+  coord_system = mat4(u[0], u[1], u[2], -glm::dot(u,eye),
+		      v[0], v[1], v[2], -glm::dot(v,eye),
+		      w[0], w[1], w[2], -glm::dot(w,eye),
+		      0.0, 0.0, 0.0, 1.0);
+  
+  coord_system = glm::transpose(coord_system);
+  return coord_system;
 }
 
 Transform::Transform()
