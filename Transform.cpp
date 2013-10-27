@@ -20,30 +20,31 @@ mat3 Transform::rotate(const float degrees, const vec3& axis) {
 			  z*x, z*y, z*z);
 
   // Use Rodrigues' formula for the rotation matrix.
-  mat3 rotated;
-  rotated = cos(theta) * mat3(1.0) 
+  mat3 rotation;
+  rotation = cos(theta) * mat3(1.0) 
     + (1 - cos(theta)) * axis_axis_t
     + sin(theta) * axis_cross;
 
-  return rotated;
+  // Transpose to deal with column major orientation
+  rotation = glm::transpose(rotation);
+
+  return rotation;
 }
 
 // Transforms the camera left around the "crystal ball" interface
 void Transform::left(float degrees, vec3& eye, vec3& up) {
-  mat3 rotation = rotate(degrees, up);
+  mat3 rotation = rotate(degrees, glm::normalize(up));
   eye = rotation * eye;
-  printf("Coordinates: %.2f, %.2f, %.2f; distance: %.2f\n", eye.x, eye.y, eye.z, sqrt(pow(eye.x, 2) + pow(eye.y, 2) + pow(eye.z, 2)));
-  glm::normalize(eye);
-  glm::normalize(up);
+  up = rotation * up;
+  // printf("Coordinates: %.2f, %.2f, %.2f; distance: %.2f\n", eye.x, eye.y, eye.z, sqrt(pow(eye.x, 2) + pow(eye.y, 2) + pow(eye.z, 2)));
 }
 
 // Transforms the camera up around the "crystal ball" interface
 void Transform::up(float degrees, vec3& eye, vec3& up) {
-  mat3 rotation = rotate(degrees, vec3(-1,0,0));
+  mat3 rotation = rotate(degrees, glm::normalize(glm::cross(eye,up)));
   eye = rotation * eye;
-  printf("Coordinates: %.2f, %.2f, %.2f; distance: %.2f\n", eye.x, eye.y, eye.z, sqrt(pow(eye.x, 2) + pow(eye.y, 2) + pow(eye.z, 2)));
-  glm::normalize(eye);
-  glm::normalize(up);
+  up = rotation * up;
+  // printf("Coordinates: %.2f, %.2f, %.2f; distance: %.2f\n", eye.x, eye.y, eye.z, sqrt(pow(eye.x, 2) + pow(eye.y, 2) + pow(eye.z, 2)));
 }
 
 // Your implementation of the glm::lookAt matrix
