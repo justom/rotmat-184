@@ -11,14 +11,21 @@ mat3 Transform::rotate(const float degrees, const vec3& axis) {
   float x = axis.x;
   float y = axis.y;
   float z = axis.z;
-  
-  return
-    cos(theta) * mat3(1.0) + (1 - cos(theta)) * mat3(x*x, x*y, x*z,
-						     y*x, y*y, y*z,
-						     z*x, z*y, z*z)
-    + sin(theta) * mat3(0, -z, y,
-			z, 0, -x,
-			-y, x, 0);
+
+  mat3 axis_cross = mat3(0, -z, y,
+			 z, 0, -x,
+			 -y, x, 0);
+  mat3 axis_axis_t = mat3(x*x, x*y, x*z,
+			  y*x, y*y, y*z,
+			  z*x, z*y, z*z);
+
+  // Use Rodrigues' formula for the rotation matrix.
+  mat3 rotated;
+  rotated = cos(theta) * mat3(1.0) 
+    + (1 - cos(theta)) * axis_axis_t
+    + sin(theta) * axis_cross;
+
+  return rotated;
 }
 
 // Transforms the camera left around the "crystal ball" interface
