@@ -1,4 +1,4 @@
- // Transform header file to define the interface. 
+// Transform header file to define the interface. 
 // The class is all static for simplicity
 // You need to implement left, up and lookAt
 // Rotate is a helper function
